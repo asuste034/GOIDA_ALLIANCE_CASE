@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.event import Events
+
 from database import Base
 
 class User(Base):
@@ -42,3 +44,6 @@ class Events(BaseModel):
     block : Optional[Block]
     emergency_block: Optional[EmergencyBlock]
 
+
+class EventResponse(Events):
+    pass
