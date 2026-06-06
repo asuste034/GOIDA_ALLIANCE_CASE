@@ -1,10 +1,10 @@
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+import asyncio
 import os
-from sqlalchemy.ext.asyncio import AsyncSession
-from models import Events
 
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
+        
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost/database")
 
 engine = create_async_engine(
@@ -20,6 +20,9 @@ AsyncSessionLocal = sessionmaker(
 
 Base = declarative_base()
 
+async def init_models():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 async def get_session() -> AsyncSession:
     async with AsyncSessionLocal() as session:
@@ -61,3 +64,7 @@ async def get_events(db: AsyncSession):
         select(Events)
     )
     return result.scalars().all()
+
+if __name__ == "__main__":
+    from models import *
+    asyncio.run(init_models())
