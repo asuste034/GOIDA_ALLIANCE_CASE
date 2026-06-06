@@ -13,7 +13,15 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(frontend main.cpp)
+add_executable(frontend main.cpp
+        api/Emergency.cpp
+        api/Emergency.h
+        api/Block.cpp
+        api/Block.h
+        api/Event.cpp
+        api/Event.h
+        api/ApiObject.cpp
+        api/ApiObject.h)
 target_link_libraries(frontend
         Qt5::Core
         Qt5::Gui
