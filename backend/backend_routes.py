@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend import database
 from backend.database import get_session
 from backend.main import app
-from backend.models import Block, Events, EventResponse
+from backend.models import  Events, EventResponse
 
 
 @app.post('/events', response_model=EventResponse)
