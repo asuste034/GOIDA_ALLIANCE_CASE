@@ -31,4 +31,14 @@ class Block(BaseModel):
     date: Optional[str] = None
     image: Optional[str] = None
 
+class EmergencyBlock(BaseModel):
+    text: str
+
+class Styles(BaseModel):
+    text: str
+
+class Events(BaseModel):
+    type: str
+    block : Optional[Block]
+    emergency_block: Optional[EmergencyBlock]
 
