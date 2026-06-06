@@ -1,8 +1,12 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, WebSocket
 from sqlalchemy import select
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
+from starlette import status
+
+from backend.utils import verify_password, create_access_token
 from deps import get_session
 from models import User, UserCreate, UserResponse
 
@@ -39,3 +43,13 @@ async def list_users(session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(User))
     users = result.scalars().all()
     return users
+
+@app.websocket('/ws')
+async def foo(websocket: WebSocket):
+    await websocket.accept()
+    for line in ['line']:
+        await websocket.send_text(line)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

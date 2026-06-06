@@ -23,9 +23,12 @@ components:
 
     block:
       required:
+        - id
         - title
         - text
       properties:
+        id:
+          type: int
         type:
           type: string
           enum: [news, info, parking, storages]
