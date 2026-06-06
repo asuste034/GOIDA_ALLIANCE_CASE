@@ -1,17 +1,18 @@
 from sqlite3 import IntegrityError
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from backend.database import get_session
-from backend.main import app
-from backend.models import UserResponse, UserCreate, User, Token
-from backend.utils import verify_password, create_access_token
+from db.database import get_session
+from main import app
+from db.models import UserResponse, UserCreate, User, Token
+from utils import verify_password, create_access_token
 
+router = APIRouter(prefix="/auth", tags=["auth"])
 
-@app.post("/users/", response_model=UserResponse)
+@router.post("/users/", response_model=UserResponse)
 async def create_user(
     user: UserCreate,
     session: AsyncSession = Depends(get_session)
@@ -29,8 +30,8 @@ async def create_user(
             detail="Пользователь с таким email уже есть в базе"
         )
 
-@app.post("/login", response_model=Token)
-async def login(data: UserCreate, db: AsyncSession = Depends(get_session())):
+@router.post("/login", response_model=Token)
+async def login(data: UserCreate, db: AsyncSession = Depends(get_session)):
     """логин"""
     result = await db.execute(select(User).where(User.username == data.username))
     user = result.scalar_one_or_none()
@@ -40,7 +41,7 @@ async def login(data: UserCreate, db: AsyncSession = Depends(get_session())):
     return Token(access_token=token)
 
 
-@app.get("/users/", response_model=list[UserResponse])
+@router.get("/users/", response_model=list[UserResponse])
 async def list_users(session: AsyncSession = Depends(get_session)):
     """Все пользователи что есть в бд"""
     result = await session.execute(select(User))

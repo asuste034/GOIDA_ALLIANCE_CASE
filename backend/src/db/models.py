@@ -4,7 +4,8 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.event import Events
 
-from database import Base
+from backend.src.db.database import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -43,7 +44,6 @@ class Events(BaseModel):
     type: str
     block : Optional[Block]
     emergency_block: Optional[EmergencyBlock]
-
 
 class EventResponse(Events):
     pass

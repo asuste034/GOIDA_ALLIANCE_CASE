@@ -1,30 +1,27 @@
 from fastapi import Depends, FastAPI, WebSocket
 from sqlalchemy import select
-from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from starlette import status
 
-from backend.utils import verify_password, create_access_token
-from deps import get_session
-from models import User, UserCreate, UserResponse
+from db.database import get_session
+from db.models import User, UserCreate, UserResponse
 
-from contextlib import asynccontextmanager
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    from init_db import init_models
-    await init_models()
-    yield
+# from contextlib import asynccontextmanager
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     from backend.src.db.init_db import init_models
+#     await init_models()
+#     yield
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
-@app.post("/users/", response_model=UserResponse)
+"""@app.post("/users/", response_model=UserResponse)
 async def create_user(
     user: UserCreate,
     session: AsyncSession = Depends(get_session)
     ):
-    """Создание нового пользователя"""
+    "Создание нового пользователя"
     try:
         async with session.begin():
             new_user = User(**user.model_dump())
@@ -39,16 +36,16 @@ async def create_user(
 
 @app.get("/users/", response_model=list[UserResponse])
 async def list_users(session: AsyncSession = Depends(get_session)):
-    """Все пользователи что есть в бд"""
+    "Все пользователи что есть в бд"
     result = await session.execute(select(User))
     users = result.scalars().all()
-    return users
+    return users"""
 
-@app.websocket('/ws')
-async def foo(websocket: WebSocket):
-    await websocket.accept()
-    for line in ['line']:
-        await websocket.send_text(line)
+from routers.auth_routes import router as auth_router
+from routers.backend_routes import router as events_router
+
+app.include_router(auth_router)
+app.include_router(events_router)
 
 if __name__ == "__main__":
     import uvicorn
