@@ -1,15 +1,14 @@
 # routes todo: create, edit, delete, save, select
 # preview, CHS
-from importlib.resources import read_text
 
 from fastapi import HTTPException
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend import database
-from backend.database import get_session
+from backend.db import database
+from backend.db.database import get_session
 from backend.main import app
-from backend.models import  Events, EventResponse
+from backend.db.models import  Events, EventResponse
 
 
 @app.post('/events', response_model=EventResponse)

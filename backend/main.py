@@ -1,19 +1,16 @@
 from fastapi import Depends, FastAPI, WebSocket
 from sqlalchemy import select
-from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from starlette import status
 
-from backend.utils import verify_password, create_access_token
-from deps import get_session
-from models import User, UserCreate, UserResponse
+from db.database import get_session
+from db.models import User, UserCreate, UserResponse
 
 from contextlib import asynccontextmanager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    from init_db import init_models
+    from backend.db.init_db import init_models
     await init_models()
     yield
 
