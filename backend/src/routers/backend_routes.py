@@ -6,7 +6,7 @@ from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import database
-from db.database import get_session
+from services.database_service import get_session
 from db.models import  Events, EventResponse
 
 router = APIRouter(prefix="/events", tags=["events"])

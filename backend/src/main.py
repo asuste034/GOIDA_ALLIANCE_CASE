@@ -4,9 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 
-from db.database import get_session
-from db.models import User, UserCreate, UserResponse
-
 # from contextlib import asynccontextmanager
 # @asynccontextmanager
 # async def lifespan(app: FastAPI):

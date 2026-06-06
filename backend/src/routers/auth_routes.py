@@ -5,8 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from db.database import get_session
-from main import app
+from services.database_service import get_session
 from db.models import UserResponse, UserCreate, User, Token
 from utils import verify_password, create_access_token
 

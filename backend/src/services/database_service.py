@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.src.db.database import AsyncSessionLocal
-from backend.src.db.models import Events
+from db.database import AsyncSessionLocal
+from db.models import Events
 
 
 async def get_session() -> AsyncSession:
