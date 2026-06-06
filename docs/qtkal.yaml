@@ -1,0 +1,55 @@
+openapi: 3.1.0
+info:
+  title: Screen Api
+  description: Screen Api
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+  /display/{id}:
+
+
+components:
+  schemas:
+    emergency:
+      required:
+        - text
+      properties:
+        text:
+          type: string
+
+    block:
+      required:
+        - title
+        - text
+      properties:
+        type:
+          type: string
+          enum: [news, info, parkings, storages]
+        title:
+          type: string
+        text:
+          type: string
+        date:
+          type: string
+        image:
+          type: string
+          format: image/webp
+
+    styles:
+      type: string
+
+    event:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum: [putBlock, putEmergency, disableEmergency]
+        blocks:
+          type: array
+          items:
+            $ref: '#/components/schemas/block'
+        emergency:
+          type: string
