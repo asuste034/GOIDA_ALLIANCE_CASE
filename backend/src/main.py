@@ -42,8 +42,9 @@ async def list_users(session: AsyncSession = Depends(get_session)):
     return users"""
 
 from routers.auth_routes import router as auth_router
-app.include_router(auth_router)
 from routers.backend_routes import router as events_router
+
+app.include_router(auth_router)
 app.include_router(events_router)
 
 if __name__ == "__main__":

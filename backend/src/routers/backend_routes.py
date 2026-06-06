@@ -12,12 +12,12 @@ from db.models import  Events, EventResponse
 router = APIRouter(prefix="/events", tags=["events"])
 
 @router.post('/events', response_model=EventResponse)
-async def create_event(event: Events, db: AsyncSession = Depends(get_session())):
+async def create_event(event: Events, db: AsyncSession = Depends(get_session)):
     return await database.create_event(db, event)
 
 
 @router.get('/events', response_model=list[EventResponse])
-async def get_events(db: AsyncSession = Depends(get_session())):
+async def get_events(db: AsyncSession = Depends(get_session)):
     return database.get_events(db)
 
 @router.put('/events/{event_id}', response_model=EventResponse)
@@ -28,12 +28,12 @@ async def update_event(event_id: int, updates: Events, db : AsyncSession = Depen
     return event
 
 @router.delete('/events/{event_id}', response_model=EventResponse)
-async def delete_event(event_id: int, db : AsyncSession = Depends(get_session())):
+async def delete_event(event_id: int, db : AsyncSession = Depends(get_session)):
     event = await database.delete_event(db, event_id)
     if not event:
         raise HTTPException(status_code=404, detail="ШАБЛОН НЕ НАЙДЕН")
     return {"message" : "Шаблон удален успешно"}
 
 @router.get('/events/{event_id}', response_model=EventResponse)
-async def get_event(event_id: int, db: AsyncSession = Depends(get_session())):
+async def get_event(event_id: int, db: AsyncSession = Depends(get_session)):
     return await database.get_event_by_id(db, event_id)

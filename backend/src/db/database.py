@@ -66,5 +66,5 @@ async def get_events(db: AsyncSession):
     return result.scalars().all()
 
 if __name__ == "__main__":
-    from models import *
+    from db.models import *
     asyncio.run(init_models())

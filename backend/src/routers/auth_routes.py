@@ -30,15 +30,15 @@ async def create_user(
             detail="Пользователь с таким email уже есть в базе"
         )
 
-# @router.post("/login", response_model=Token)
-# async def login(data: UserCreate, db: AsyncSession = Depends(get_session())):
-#     """логин"""
-#     result = await db.execute(select(User).where(User.username == data.username))
-#     user = result.scalar_one_or_none()
-#     if not user or not verify_password(data.password, user.hashed_password):
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Неверные данные")
-#     token = create_access_token({"sub": str(user.id)})
-#     return Token(access_token=token)
+@router.post("/login", response_model=Token)
+async def login(data: UserCreate, db: AsyncSession = Depends(get_session)):
+    """логин"""
+    result = await db.execute(select(User).where(User.username == data.username))
+    user = result.scalar_one_or_none()
+    if not user or not verify_password(data.password, user.hashed_password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Неверные данные")
+    token = create_access_token({"sub": str(user.id)})
+    return Token(access_token=token)
 
 
 @router.get("/users/", response_model=list[UserResponse])
