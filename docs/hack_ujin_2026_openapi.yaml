@@ -1,0 +1,1479 @@
+openapi: 3.1.0
+info:
+  title: Ujin Platform API
+  version: 1.0.0
+  description: 'API платформы Ujin. Предоставляет доступ к данным о комплексах, зданиях,
+
+    парковках, кладовках и новостях.
+
+
+    **Токены** (20 шт.) имеют доступ к 1–2 зданиям каждый:
+
+    - token 01 → здания 121,122
+
+    - token 02 → здания 123,124
+
+    - …
+
+    - token 20 → здания 159,160
+
+    '
+servers:
+- url: https://api-uae-test.ujin.tech
+  description: Staging (UAE)
+- url: http://localhost:9999
+  description: Local dev
+tags:
+- name: Объекты недвижимости
+  description: Комплексы и здания
+- name: Паркинг
+  description: Парковочные места с фильтрацией
+- name: Кладовые
+  description: Кладовые помещения с фильтрацией
+- name: Новости
+  description: Новости и объявления
+paths:
+  /v1/complex/list/:
+    get:
+      tags:
+      - Объекты недвижимости
+      summary: Список комплексов
+      description: Возвращает список доступных ЖК
+      operationId: getComplexList
+      parameters:
+      - name: token
+        in: query
+        description: Токен авторизации
+        required: true
+        schema:
+          type: string
+          examples:
+          - ust-0000000-00000000000000000000000000000001
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  command:
+                    type: string
+                    examples:
+                    - api->v1->complex->list
+                  message:
+                    type: string
+                    examples:
+                    - ''
+                  error:
+                    type: integer
+                    examples:
+                    - 0
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ComplexItem'
+                      links:
+                        $ref: '#/components/schemas/PaginationLinks'
+                      meta:
+                        $ref: '#/components/schemas/PaginationMeta'
+              examples:
+              - command: api->v1->complex->list
+                message: ''
+                error: 0
+                data:
+                  items:
+                  - id: 63
+                    title: hackaton2026\1
+                    region:
+                      id: 1
+                      title: Москва
+                    paid_tickets_enabled: true
+                  - id: 64
+                    title: hackaton2026\2
+                    region:
+                      id: 1
+                      title: Москва
+                    paid_tickets_enabled: true
+                  links:
+                    first: https://api-uae-test.ujin.tech/api/v1/complex/list?page=1
+                    last: https://api-uae-test.ujin.tech/api/v1/complex/list?page=1
+                    prev: null
+                    next: null
+                  meta:
+                    current_page: 1
+                    from: 1
+                    last_page: 1
+                    path: https://api-uae-test.ujin.tech/api/v1/complex/list
+                    per_page: 500
+                    to: 20
+                    total: 20
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/buildings/get-list-crm/:
+    get:
+      tags:
+      - Объекты недвижимости
+      summary: Список зданий
+      description: Возвращает список зданий с детальной информацией
+      operationId: getBuildingsList
+      parameters:
+      - name: token
+        in: query
+        description: Токен авторизации
+        required: true
+        schema:
+          type: string
+          examples:
+          - ust-0000000-00000000000000000000000000000001
+      - name: per_page
+        in: query
+        description: Количество на страницу
+        required: false
+        schema:
+          type: integer
+          examples:
+          - 1000
+      - name: page
+        in: query
+        description: Номер страницы
+        required: false
+        schema:
+          type: integer
+          examples:
+          - 1
+      - name: complex_id
+        in: query
+        description: Фильтр по ID ЖК
+        required: false
+        schema:
+          type: integer
+          examples:
+          - 63
+      - name: search
+        in: query
+        description: Поиск по адресу
+        required: false
+        schema:
+          type: string
+          examples:
+          - Здание
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  command:
+                    type: string
+                    examples:
+                    - api->v1->buildings->get-list-crm
+                  message:
+                    type: string
+                    examples:
+                    - ''
+                  error:
+                    type: integer
+                    examples:
+                    - 0
+                  data:
+                    type: object
+                    properties:
+                      buildings:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BuildingItem'
+                      meta:
+                        $ref: '#/components/schemas/PaginationMeta'
+              examples:
+              - command: api->v1->buildings->get-list-crm
+                message: ''
+                error: 0
+                data:
+                  buildings:
+                  - id: 121
+                    complex:
+                      id: 63
+                      title: hackaton2026\1
+                      timezone: Europe/Moscow
+                    building:
+                      id: 121
+                      title: Здание № 1/1
+                      alias: ''
+                      floor: 10
+                      apartmentCount: 36
+                      entranceCount: 2
+                      address:
+                        city: Москва
+                        street: ул. Примерная
+                        house: '1'
+                        fullAddress: г. Москва, ул. Примерная, 1
+                      sell_enabled: true
+                      sell_emails: []
+                      security_number: '+74951234567'
+                      guest_scud_pass_limit: 21
+                      buildings_properties_rent_available: true
+                      resident_request_variant: resident-request-by-owner
+                      paid_tickets_allowed: 'true'
+                      meters:
+                        mode: automatic
+                        manual-update:
+                          from_day_of_month: 5
+                          until_day_of_month: 12
+                          push_day_of_month: 11
+                          notification_message: Передай показания
+                    entrances2:
+                    - number: 1
+                      first_apartment: 1
+                      last_apartment: 18
+                    - number: 2
+                      first_apartment: 19
+                      last_apartment: 36
+                    statistics:
+                    - type: parking
+                      title: Парковка
+                      count: 30
+                    - type: pantry
+                      title: Кладовка
+                      count: 15
+                  meta:
+                    current_page: 1
+                    from: 1
+                    last_page: 1
+                    per_page: 1000
+                    to: 40
+                    total: 40
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/v1/parking/list:
+    get:
+      tags:
+      - Паркинг
+      summary: Все парковочные места
+      operationId: getParkingList
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Токен авторизации
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        description: Фильтр по ID ЖК
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        description: Фильтр по ID зданий
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/parking/free:
+    get:
+      tags:
+      - Паркинг
+      summary: Свободные парковочные места (status=free)
+      operationId: getParkingFree
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingResponse'
+              examples:
+              - command: parking->free
+                message: ''
+                error: 0
+                data:
+                  items:
+                  - complex_id: 63
+                    complex_title: hackaton2026\1
+                    buildings:
+                    - building_id: 121
+                      building_title: Здание № 1/1
+                      zones:
+                      - id: b15eb3bb-0cc9-5ffa-9cd6-0159a11c8e26
+                        name: Наземный паркинг
+                        spots:
+                        - id: 3593bf81-bdcb-50db-b13a-35a56b8cfbcc
+                          assignment_type: public
+                          status: free
+                        - id: cc30777b-1cbb-5ef8-ac82-8a14ff9ab8d7
+                          assignment_type: unassigned
+                          status: free
+                connection:
+                  server_real_ip: 127.0.0.1
+                  user_ip: 127.0.0.1
+                  token: ust-0000000-00000000000000000000000000000001
+                  fromdomain: ''
+                  worktime: 0.461sec
+                  worktime_tmp: 0.461sec
+                  request_uuid: e36dea60-5ad0-41b7-b233-84942401ae47
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/parking/occupied:
+    get:
+      tags:
+      - Паркинг
+      summary: Занятые парковочные места (status=occupied)
+      operationId: getParkingOccupied
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/parking/public:
+    get:
+      tags:
+      - Паркинг
+      summary: Общедоступные места (assignment_type=public)
+      operationId: getParkingPublic
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/parking/private:
+    get:
+      tags:
+      - Паркинг
+      summary: Приватные места (assignment_type=private)
+      operationId: getParkingPrivate
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/parking/unassigned:
+    get:
+      tags:
+      - Паркинг
+      summary: Неназначенные места (assignment_type=unassigned)
+      operationId: getParkingUnassigned
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParkingResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/storage/list:
+    get:
+      tags:
+      - Кладовые
+      summary: Все кладовые помещения
+      operationId: getStorageList
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/storage/free:
+    get:
+      tags:
+      - Кладовые
+      summary: Свободные кладовые (status=free)
+      operationId: getStorageFree
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/storage/occupied:
+    get:
+      tags:
+      - Кладовые
+      summary: Занятые кладовые (status=occupied)
+      operationId: getStorageOccupied
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/storage/public:
+    get:
+      tags:
+      - Кладовые
+      summary: Общедоступные кладовые (assignment_type=public)
+      operationId: getStoragePublic
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/storage/private:
+    get:
+      tags:
+      - Кладовые
+      summary: Приватные кладовые (assignment_type=private)
+      operationId: getStoragePrivate
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/storage/unassigned:
+    get:
+      tags:
+      - Кладовые
+      summary: Неназначенные кладовые (assignment_type=unassigned)
+      operationId: getStorageUnassigned
+      parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+        examples:
+        - ust-0000000-00000000000000000000000000000001
+      - name: complexes[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 63
+        - 72
+      - name: buildings[]
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+        style: form
+        explode: true
+        examples:
+        - 121
+        - 122
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/news/list:
+    get:
+      tags:
+      - Новости
+      summary: Список новостей
+      description: Метод получает список новостей
+      operationId: getNewsList
+      parameters:
+      - name: token
+        in: query
+        description: Токен авторизации
+        required: true
+        schema:
+          type: string
+          examples:
+          - ust-0000000-00000000000000000000000000000001
+      - name: complexes
+        in: query
+        description: Фильтр по ID ЖК
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: buildings
+        in: query
+        description: Фильтр по ID зданий
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: type
+        in: query
+        description: Тип новостей
+        required: false
+        schema:
+          type: string
+          examples:
+          - news
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  command:
+                    type: string
+                    examples:
+                    - news->list
+                  message:
+                    type: string
+                    examples:
+                    - ''
+                  error:
+                    type: integer
+                    examples:
+                    - 0
+                  data:
+                    type: object
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/NewsItem'
+                      links:
+                        $ref: '#/components/schemas/PaginationLinks'
+                      meta:
+                        $ref: '#/components/schemas/PaginationMeta'
+                  connection:
+                    $ref: '#/components/schemas/ConnectionInfo'
+              examples:
+              - command: news->list
+                message: ''
+                error: 0
+                data:
+                  items:
+                  - id: 135
+                    title: Заявки через приложение
+                    date: '2026-06-02'
+                    text: <p>Жители ЖК теперь могут отправлять заявки...</p>
+                    type:
+                      slug: news
+                      title: Новость
+                    buildings:
+                    - id: 121
+                      title: Здание № 1/1
+                    - id: 122
+                      title: Здание № 1/2
+                  - id: 134
+                    title: Шлагбаум на парковке
+                    date: '2026-06-02'
+                    text: <p>На въезде в ЖК установили новый шлагбаум...</p>
+                    type:
+                      slug: news
+                      title: Новость
+                    buildings:
+                    - id: 121
+                      title: Здание № 1/1
+                  links:
+                    first: https://api-uae-test.ujin.tech/api/v1/news/list?page=1
+                    last: https://api-uae-test.ujin.tech/api/v1/news/list?page=1
+                    prev: null
+                    next: null
+                  meta:
+                    current_page: 1
+                    from: 1
+                    last_page: 1
+                    per_page: 15
+                    to: 5
+                    total: 5
+                connection:
+                  server_real_ip: ''
+                  user_ip: 77.43.156.108
+                  token: ust-0000000-00000000000000000000000000000001
+                  fromdomain: ''
+                  worktime: 0.094sec
+                  worktime_tmp: 0.094sec
+                  request_uuid: 0d168620-beab-48e2-ba9b-72ffd0f5a378
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/news/view:
+    get:
+      tags:
+      - Новости
+      summary: Просмотр новости
+      description: Метод получает содержание новости
+      operationId: getNewsView
+      parameters:
+      - name: token
+        in: query
+        description: Токен авторизации
+        required: true
+        schema:
+          type: string
+          examples:
+          - ust-0000000-00000000000000000000000000000001
+      - name: id
+        in: query
+        description: ID новости
+        required: true
+        schema:
+          type: integer
+          format: int64
+          examples:
+          - 135
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  command:
+                    type: string
+                    examples:
+                    - news->view
+                  message:
+                    type: string
+                    examples:
+                    - ''
+                  error:
+                    type: integer
+                    examples:
+                    - 0
+                  data:
+                    type: object
+                    properties:
+                      item:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          title:
+                            type: string
+                          text:
+                            type: string
+                          date:
+                            type: string
+                          images:
+                            type: array
+                            items:
+                              type: string
+                        examples:
+                        - id: 135
+                          title: Заявки через приложение
+                          text: <p>Жители ЖК теперь могут отправлять заявки...</p>
+                          date: '2026-06-02'
+                          images: []
+                  connection:
+                    $ref: '#/components/schemas/ConnectionInfo'
+              examples:
+              - command: news->view
+                message: ''
+                error: 0
+                data:
+                  item:
+                    id: 135
+                    title: Заявки через приложение
+                    text: <p>Жители ЖК теперь могут отправлять заявки в управляющую компанию через приложение.</p>
+                    date: '2026-06-02'
+                    images: []
+                connection:
+                  server_real_ip: ''
+                  user_ip: 77.43.156.108
+                  token: ust-0000000-00000000000000000000000000000001
+                  fromdomain: ''
+                  worktime: 0.149sec
+                  worktime_tmp: 0.137sec
+                  request_uuid: 7fa08a9c-5a83-495c-a876-be859156b819
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /whoami:
+    get:
+      summary: Информация о сервисе
+      operationId: whoami
+      responses:
+        '200':
+          description: Название сервиса
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                - wrapping api service for hackaton 2026
+  /ping:
+    get:
+      summary: Проверка доступности
+      operationId: ping
+      responses:
+        '200':
+          description: pong
+          content:
+            text/plain:
+              schema:
+                type: string
+                examples:
+                - pong
+components:
+  schemas:
+    ComplexItem:
+      type: object
+      description: Жилой комплекс
+      properties:
+        id:
+          type: integer
+          description: ID ЖК
+          examples:
+          - 63
+        title:
+          type: string
+          description: Название ЖК
+          examples:
+          - hackaton2026\1
+        region:
+          type: object
+          description: Регион
+          properties:
+            id:
+              type: integer
+              examples:
+              - 1
+            title:
+              type: string
+              examples:
+              - Москва
+        paid_tickets_enabled:
+          type: boolean
+          examples:
+          - true
+    BuildingItem:
+      type: object
+      description: Здание
+      properties:
+        id:
+          type: integer
+          description: ID здания
+        complex:
+          type: object
+          description: ЖК
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            timezone:
+              type: string
+        building:
+          type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            alias:
+              type: string
+            floor:
+              type: integer
+            apartmentCount:
+              type: integer
+            entranceCount:
+              type: integer
+            address:
+              type: object
+              properties:
+                city:
+                  type: string
+                street:
+                  type: string
+                house:
+                  type: string
+                fullAddress:
+                  type: string
+            sell_enabled:
+              type: boolean
+            sell_emails:
+              type: array
+              items:
+                type: string
+            security_number:
+              type: string
+            guest_scud_pass_limit:
+              type: integer
+            buildings_properties_rent_available:
+              type: boolean
+            resident_request_variant:
+              type: string
+            paid_tickets_allowed:
+              type: string
+            meters:
+              type: object
+              properties:
+                mode:
+                  type: string
+                manual-update:
+                  type: object
+                  properties:
+                    from_day_of_month:
+                      type: integer
+                    until_day_of_month:
+                      type: integer
+                    push_day_of_month:
+                      type: integer
+                    notification_message:
+                      type: string
+        entrances2:
+          type: array
+          items:
+            type: object
+            properties:
+              number:
+                type: integer
+              first_apartment:
+                type: integer
+              last_apartment:
+                type: integer
+        statistics:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              title:
+                type: string
+              count:
+                type: integer
+    ParkingResponse:
+      type: object
+      properties:
+        command:
+          type: string
+          examples:
+          - parking->list
+        message:
+          type: string
+          examples:
+          - ''
+        error:
+          type: integer
+          examples:
+          - 0
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ParkingComplex'
+        connection:
+          $ref: '#/components/schemas/ConnectionInfo'
+    Spot:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID парковочного места
+        assignment_type:
+          type: string
+          enum:
+          - public
+          - private
+          - unassigned
+        status:
+          type: string
+          enum:
+          - free
+          - occupied
+    Zone:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID зоны
+        name:
+          type: string
+          examples:
+          - Наземный паркинг
+        spots:
+          type: array
+          items:
+            $ref: '#/components/schemas/Spot'
+    ParkingBuilding:
+      type: object
+      properties:
+        building_id:
+          type: integer
+        building_title:
+          type: string
+        zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Zone'
+    ParkingComplex:
+      type: object
+      properties:
+        complex_id:
+          type: integer
+        complex_title:
+          type: string
+        buildings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParkingBuilding'
+    StorageResponse:
+      type: object
+      properties:
+        command:
+          type: string
+          examples:
+          - storage->list
+        message:
+          type: string
+          examples:
+          - ''
+        error:
+          type: integer
+          examples:
+          - 0
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/StorageComplex'
+        connection:
+          $ref: '#/components/schemas/ConnectionInfo'
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        assignment_type:
+          type: string
+          enum:
+          - public
+          - private
+          - unassigned
+        status:
+          type: string
+          enum:
+          - free
+          - occupied
+    StorageBuilding:
+      type: object
+      properties:
+        building_id:
+          type: integer
+        building_title:
+          type: string
+        rooms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Room'
+    StorageComplex:
+      type: object
+      properties:
+        complex_id:
+          type: integer
+        complex_title:
+          type: string
+        buildings:
+          type: array
+          items:
+            $ref: '#/components/schemas/StorageBuilding'
+    NewsItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        date:
+          type: string
+        text:
+          type: string
+        type:
+          type: object
+          properties:
+            slug:
+              type: string
+            title:
+              type: string
+        buildings:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+    PaginationLinks:
+      type: object
+      properties:
+        first:
+          type: string
+        last:
+          type: string
+        prev:
+          type: string
+          nullable: true
+        next:
+          type: string
+          nullable: true
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        from:
+          type: integer
+        last_page:
+          type: integer
+        path:
+          type: string
+        per_page:
+          type: integer
+        to:
+          type: integer
+        total:
+          type: integer
+    ConnectionInfo:
+      type: object
+      properties:
+        server_real_ip:
+          type: string
+        user_ip:
+          type: string
+        token:
+          type: string
+        fromdomain:
+          type: string
+        worktime:
+          type: string
+          examples:
+          - 0.461sec
+        worktime_tmp:
+          type: string
+        request_uuid:
+          type: string
+  responses:
+    Unauthorized:
+      description: Неверный или отсутствующий токен
+      content:
+        application/json:
+          examples:
+          - command: auth
+            error: 1
+            message: Invalid token
+            data: {}
+    NotFound:
+      description: Здание не принадлежит указанному ЖК
+      content:
+        application/json:
+          examples:
+          - command: validation
+            error: 1
+            message: Building does not belong to requested complexes
+            data: {}
