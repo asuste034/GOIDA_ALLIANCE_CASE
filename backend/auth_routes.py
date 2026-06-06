@@ -31,6 +31,7 @@ async def create_user(
 
 @app.post("/login", response_model=Token)
 async def login(data: UserCreate, db: AsyncSession = Depends(get_session())):
+    """логин"""
     result = await db.execute(select(User).where(User.username == data.username))
     user = result.scalar_one_or_none()
     if not user or not verify_password(data.password, user.hashed_password):
