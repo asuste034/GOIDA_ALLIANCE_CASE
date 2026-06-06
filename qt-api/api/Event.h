@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include "ApiObject.h"
 #include "Emergency.h"
+#include <QByteArray>
 
 class Event : public ApiObject {
 public:
@@ -66,7 +67,7 @@ public:
 
     void unmarshall(const QByteArray &data) {
         QJsonDocument doc;
-        doc.fromBinaryData(data);
+        doc = QJsonDocument::fromVariant(QCborValue::fromCbor(data).toVariant());
 
         if (doc["type"].toString() == "putBlock")
             type = putBlock;

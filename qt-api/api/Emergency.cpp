@@ -4,7 +4,7 @@
 
 #include "Emergency.h"
 
-inline void Emergency::set_text(const QString& text_) {
+void Emergency::set_text(const QString& text_) {
     text = text_;
 }
 
@@ -12,7 +12,7 @@ QString Emergency::get_text() {
     return text;
 }
 
-inline void Emergency::set_timeout(const QDateTime &timeout_) {
+void Emergency::set_timeout(const QDateTime &timeout_) {
     timeout = timeout_;
 }
 
@@ -28,8 +28,7 @@ QByteArray Emergency::marshall() {
 }
 
 void Emergency::unmarshall(const QByteArray &data) {
-    QJsonDocument doc;
-    doc.fromBinaryData(data);
+    QJsonDocument doc = QJsonDocument::fromVariant(QCborValue::fromCbor(data).toVariant());
     text = doc["text"].toString();
     timeout = QDateTime::fromString(doc["timeout"].toString());
 }

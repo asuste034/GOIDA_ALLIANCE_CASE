@@ -70,8 +70,7 @@ QByteArray Block::marshall() {
 }
 
 void Block::unmarshall(const QByteArray &data) {
-    QJsonDocument doc;
-    doc.fromBinaryData(data);
+    QJsonDocument doc = QJsonDocument::fromVariant(QCborValue::fromCbor(data).toVariant());
 
     if (doc["type"].toString() == "news")
         type = news;
