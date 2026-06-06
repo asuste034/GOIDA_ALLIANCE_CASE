@@ -20,7 +20,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:test_1029@db:5432/GOIDADB
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/pstu_doc
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       db:
         condition: service_healthy
