@@ -4,7 +4,8 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.event import Events
 
-from db.database import Base
+from backend.src.db.database import Base
+
 
 class User(Base):
     __tablename__ = "users"
