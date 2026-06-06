@@ -17,6 +17,9 @@ components:
       properties:
         text:
           type: string
+        timeout:
+          type: string
+          format: date-time
 
     block:
       required:
@@ -28,16 +31,16 @@ components:
           type: int
         type:
           type: string
-          enum: [news, info, parkings, storages]
+          enum: [news, info, parking, storages]
         title:
           type: string
         text:
           type: string
         date:
           type: string
-        image:
-          type: string
-          format: image/webp
+        images_url:
+          type: array
+          items: integer
 
     styles:
       type: string

@@ -1,7 +1,11 @@
 #include <QApplication>
 #include <QPushButton>
 
+#include "api/Emergency.h"
+
 int main(int argc, char *argv[]) {
+    Emergency kal;
+    kal.
     QApplication a(argc, argv);
     QPushButton button("Hello world!", nullptr);
     button.resize(200, 100);
